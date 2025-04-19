@@ -1,0 +1,9 @@
+Flask
+python-dotenv
+requests
+PyPDF2
+langchain
+langchain-google-genai
+langchain-community
+langchain-chroma
+google-generativeai
