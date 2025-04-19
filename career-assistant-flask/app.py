@@ -20,9 +20,11 @@ def home():
 
 @app.route('/fetch_jobs', methods=['POST'])
 def fetch_jobs():
-    skill = request.json.get('skill')
+    data = request.get_json()
+    skill = data.get('skill')
     if not skill:
         return jsonify({"error": "Skill is required"}), 400
+
     results = fetch_jobs_for_skill(skill)
     return jsonify(results)
 
@@ -36,8 +38,11 @@ def fetch_courses():
     if not resume_path or not os.path.exists(resume_path):
         return jsonify({"error": "Valid resume path is required"}), 400
 
-    result = get_recommendations_as_json(resume_path, career_goal, language)
-    return jsonify(json.loads(result))
+    try:
+        result = get_recommendations_as_json(resume_path, career_goal, language)
+        return jsonify(json.loads(result))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate_roadmap', methods=['POST'])
 def generate_roadmap():
@@ -48,9 +53,12 @@ def generate_roadmap():
     if not resume_path or not os.path.exists(resume_path):
         return jsonify({"error": "Valid resume path is required"}), 400
 
-    rag_chain = setup_career_advisor(resume_path)
-    roadmap = get_roadmap_json(rag_chain, career_goal)
-    return jsonify(roadmap)
+    try:
+        rag_chain = setup_career_advisor(resume_path)
+        roadmap = get_roadmap_json(rag_chain, career_goal)
+        return jsonify(roadmap)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/youtube_tutorials', methods=['POST'])
 def youtube_tutorials():
@@ -61,8 +69,11 @@ def youtube_tutorials():
     if not skill:
         return jsonify({"error": "Skill is required"}), 400
 
-    results = search_youtube_tutorials(skill, language)
-    return jsonify(results)
+    try:
+        results = search_youtube_tutorials(skill, language)
+        return jsonify(results)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

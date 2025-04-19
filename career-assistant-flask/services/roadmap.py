@@ -51,27 +51,29 @@ def setup_career_advisor(resume_path, skills_path=None, ref_docs_folder=None):
 
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.7, max_tokens=2000)
 
+    # Escape curly braces with double {{ and }} for prompt safety
     system_prompt = (
         "You are a career advisor AI assistant. Analyze the provided resume and documents "
         "to create a clear, concise career roadmap in JSON format. The JSON must follow this structure:\n\n"
-        "{\n"
+        "{{\n"
         '  "career_goal": "User\'s specified goal",\n'
         '  "roadmap": [\n'
-        "    {\n"
+        "    {{\n"
         '      "step": 1,\n'
         '      "title": "Step title",\n'
         '      "description": "Brief description",\n'
         '      "duration": "Estimated time",\n'
         '      "resources": ["Resource 1", "Resource 2"]\n'
-        "    }\n"
+        "    }}\n"
         "  ]\n"
-        "}\n"
+        "}}"
     )
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system", system_prompt),
-        ("human", "{input}"),
-    ])
+    ("system", system_prompt),
+    ("human", "Based on the following resume and documents:\n{context}\n\nUser's goal: {input}"),
+])
+
 
     qa_chain = create_stuff_documents_chain(llm, prompt)
     rag_chain = create_retrieval_chain(retriever, qa_chain)
