@@ -37,5 +37,3 @@ Unlike traditional keyword-based matching systems, JobSensi focuses on **semanti
 - **Deployment:** REST API–friendly architecture  
 
 ---
-
-## 🧩 System Architecture
